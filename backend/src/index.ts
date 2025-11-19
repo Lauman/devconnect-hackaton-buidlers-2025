@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import dotenv from "dotenv";
-import { storeWithdraw } from "./arkiv.js";
+import { storeWithdraw, storeSupply, storeFlashLoan, storeLiquidationCall } from "./arkiv.js";
 import { Queue } from "bullmq";
 
 dotenv.config();
