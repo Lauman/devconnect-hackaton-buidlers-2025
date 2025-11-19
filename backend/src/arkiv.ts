@@ -6,14 +6,16 @@ import {
 	http,
 } from "@arkiv-network/sdk";
 import { privateKeyToAccount } from "@arkiv-network/sdk/accounts";
-import { kaolin, localhost } from "@arkiv-network/sdk/chains";
+import { kaolin, localhost, mendoza } from "@arkiv-network/sdk/chains";
 import type { Chain } from "viem";
-import { WithdrawSchema } from "./types";
-import { jsonToPayload } from '@arkiv-network/sdk/utils';
-
+import { WithdrawSchema } from "./types.js";
+import { jsonToPayload, stringToPayload } from '@arkiv-network/sdk/utils';
+import dotenv from "dotenv";
+dotenv.config();
 const chains = {
 	kaolin: kaolin,
 	localhost: localhost,
+    mendoza: mendoza,
 	infurademo: defineChain({
 		id: 60138453045,
 		name: "InfuraDemo",
@@ -31,10 +33,10 @@ const chains = {
 	}),
 } as Record<string, Chain>;
 const arkivWalletClient = createWalletClient({
-	chain: chains[process.env.ARKIV_CHAIN as keyof typeof chains],
-	transport: http(),
-	account: privateKeyToAccount(process.env.ARKIV_PRIVATE_KEY as `0x${string}`),
-});
+    chain: mendoza,
+    transport: http('https://mendoza.hoodi.arkiv.network/rpc'),
+    account: privateKeyToAccount(process.env.ARKIV_PRIVATE_KEY as `0x${string}`),
+  });
 
 const arkivPublicClient = createPublicClient({
 	chain: chains[process.env.ARKIV_CHAIN as keyof typeof chains],
@@ -45,15 +47,18 @@ const arkivPublicClient = createPublicClient({
 export async function storeWithdraw(data: WithdrawSchema) {
 
 console.log("store withdraw")
+
 const receipt = await arkivWalletClient.mutateEntities({
     creates: [
         {
             payload: jsonToPayload(data),
-            contentType: 'text/plain',
+            contentType: 'application/json',
             attributes: [
-            { key: 'type', value: 'withdraw' },
-            { key: 'choice', value: 'no' },
-            { key: 'weight', value: '1' },
+            { key: 'reserve', value: data.reserve },
+            { key: 'user', value: data.user },
+            { key: 'to', value: data.to },
+            { key: 'amount', value: data.amount},
+            {key: "txHash", value: data.txHash}
             ],
             expiresIn: 200,
         },

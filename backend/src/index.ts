@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import dotenv from "dotenv";
-import { storeWithdraw } from "./arkiv";
+import { storeWithdraw } from "./arkiv.js";
 
 dotenv.config();
 
@@ -104,7 +104,7 @@ async function main() {
 
 async function handleEventWithdraw(event: string, reserve: string, user: string, to: string, amount: bigint,txHash: string) {
   console.log("saving withdraw data")
-  await storeWithdraw({reserve, user, to, amount, txHash})
+  await storeWithdraw({reserve, user, to, amount: amount.toString(), txHash})
   console.log("data saved")
 }
 

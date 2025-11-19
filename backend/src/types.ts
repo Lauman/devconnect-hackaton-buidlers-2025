@@ -26,9 +26,9 @@ export const flashLoanSchema = z.object({
 	referralCode: z.string().transform((val) => BigInt(val)),
 });
 
-export type WithdrawSchema = z.infer<typeof withdrawSchema>;
-export type SupplySchema = z.infer<typeof supplySchema>;
-export type FlashLoanSchema = z.infer<typeof flashLoanSchema>;
+export type WithdrawSchema = z.input<typeof withdrawSchema>;
+export type SupplySchema = z.input<typeof supplySchema>;
+export type FlashLoanSchema = z.input<typeof flashLoanSchema>;
 
 
 export type DataType = "stats" | "blockdata" | "blocknumber";
