@@ -59,8 +59,8 @@ export async function storeWithdraw(data: WithdrawSchema) {
         payload: jsonToPayload(data),
         contentType: "application/json",
         attributes: [
-          { key: "provider", value: "aave" },
-          { key: "event", value: "withdraw" },
+          { key: "protocol", value: "aave-v3" },
+          { key: "event-type", value: "withdraw" },
           { key: "reserve", value: data.reserve },
           { key: "user", value: data.user },
           { key: "to", value: data.to },
@@ -81,8 +81,8 @@ export async function storeSupply(data: SupplySchema) {
         payload: jsonToPayload(data),
         contentType: "application/json",
         attributes: [
-            { key: 'provider', value: 'aave'},
-            { key: "event", value: "supply" },
+            { key: 'protocol', value: 'aave-v3'},
+            { key: "event-type", value: "supply" },
             { key: "reserve", value: data.reserve },
             { key: "user", value: data.user },
             { key: "onBehalfOf", value: data.onBehalfOf },
@@ -104,8 +104,8 @@ export async function storeFlashLoan(data: FlashLoanSchema) {
         payload: jsonToPayload(data),
         contentType: "application/json",
         attributes: [
-            { key: 'provider', value: 'aave'},
-            { key: "event", value: "flash-loan" },
+            { key: 'protocol', value: 'aave-v3'},
+            { key: "event-type", value: "flash-loan" },
             { key: "target", value: data.target },
             { key: "initiator", value: data.initiator },
             { key: "asset", value: data.asset },
@@ -129,8 +129,8 @@ export async function storeLiquidationCall(data: LiquidationCallSchema) {
         payload: jsonToPayload(data),
         contentType: "application/json",
         attributes: [
-            { key: 'provider', value: 'aave'},
-            { key: "event", value: "liquidation-call" },
+            { key: 'protocol', value: 'aave-v3'},
+            { key: "event-type", value: "liquidation-call" },
             { key: "collateralAsset", value: data.collateralAsset },
             { key: "debtAsset", value: data.debtAsset },
             { key: "user", value: data.user },
