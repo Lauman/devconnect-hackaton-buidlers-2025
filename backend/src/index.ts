@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import dotenv from "dotenv";
-import { storeWithdraw } from "./arkiv.js";
+import { storeWithdraw, storeSupply, storeFlashLoan, storeLiquidationCall } from "./arkiv.js";
 
 dotenv.config();
 
@@ -109,14 +109,20 @@ async function handleEventWithdraw(event: string, reserve: string, user: string,
 }
 
 async function handleEventSupply(event: string, reserve: string, user: string, onBehalfOf: string, amount: bigint, referralCode: bigint,txHash: string) {
-  console.log("⚙ Execute handleEventWithdraw...");
+  console.log("saving supply data")
+  await storeSupply({reserve, user, onBehalfOf, amount: amount.toString(), referralCode: referralCode.toString(), txHash})
+  console.log("data saved")
 }
 
 async function handleEventFlashLoan(event: string, target: string, initiator: string, asset: string, amount: bigint, interestRateMode: bigint, premium: bigint, referralCode: bigint,txHash: string) {
-  console.log("⚙ Execute handleEventFlashLoan...");
+  console.log("saving flash loan data")
+  await storeFlashLoan({target, initiator, asset, amount: amount.toString(), interestRateMode: interestRateMode.toString(), premium: premium.toString(), referralCode: referralCode.toString(), txHash})
+  console.log("data saved")
 }
 
 async function handleEventLiquidationCall(event: string, collateralAsset : string, debtAsset : string, user : string, debtToCover : bigint, liquidatedCollateralAmount : bigint, liquidator : string, receiveAToken : boolean,txHash: string) {
-  console.log("⚙ Execute handleEventFlashLoan...");
+  console.log("saving liquidation call data")
+  await storeLiquidationCall({collateralAsset, debtAsset, user, debtToCover: debtToCover.toString(), liquidatedCollateralAmount: liquidatedCollateralAmount.toString(), liquidator, receiveAToken, txHash})
+  console.log("data saved")
 }
 main().catch(console.error);

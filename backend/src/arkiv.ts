@@ -8,7 +8,7 @@ import {
 import { privateKeyToAccount } from "@arkiv-network/sdk/accounts";
 import { kaolin, localhost, mendoza } from "@arkiv-network/sdk/chains";
 import type { Chain } from "viem";
-import { WithdrawSchema } from "./types.js";
+import { WithdrawSchema, SupplySchema, FlashLoanSchema, LiquidationCallSchema } from "./types.js";
 import { jsonToPayload, stringToPayload } from '@arkiv-network/sdk/utils';
 import dotenv from "dotenv";
 dotenv.config();
@@ -45,9 +45,6 @@ const arkivPublicClient = createPublicClient({
 
 
 export async function storeWithdraw(data: WithdrawSchema) {
-
-console.log("store withdraw")
-
 const receipt = await arkivWalletClient.mutateEntities({
     creates: [
         {
@@ -64,6 +61,74 @@ const receipt = await arkivWalletClient.mutateEntities({
         },
         ],
 });
-console.info("Data stored successfully:", receipt);
+console.info("Withdraw data stored successfully:", receipt);
 }
+
+export async function storeSupply(data: SupplySchema) {
+const receipt = await arkivWalletClient.mutateEntities({
+    creates: [
+        {
+            payload: jsonToPayload(data),
+            contentType: 'application/json',
+            attributes: [
+            { key: 'reserve', value: data.reserve },
+            { key: 'user', value: data.user },
+            { key: 'onBehalfOf', value: data.onBehalfOf },
+            { key: 'amount', value: data.amount},
+            { key: 'referralCode', value: data.referralCode},
+            { key: "txHash", value: data.txHash}
+            ],
+            expiresIn: 200,
+        },
+        ],
+});
+console.info("Supply data stored successfully:", receipt);
+}
+
+export async function storeFlashLoan(data: FlashLoanSchema) {
+const receipt = await arkivWalletClient.mutateEntities({
+    creates: [
+        {
+            payload: jsonToPayload(data),
+            contentType: 'application/json',
+            attributes: [
+            { key: 'target', value: data.target },
+            { key: 'initiator', value: data.initiator },
+            { key: 'asset', value: data.asset },
+            { key: 'amount', value: data.amount},
+            { key: 'interestRateMode', value: data.interestRateMode},
+            { key: 'premium', value: data.premium},
+            { key: 'referralCode', value: data.referralCode},
+            { key: "txHash", value: data.txHash}
+            ],
+            expiresIn: 200,
+        },
+        ],
+});
+console.info("FlashLoan data stored successfully:", receipt);
+}
+
+export async function storeLiquidationCall(data: LiquidationCallSchema) {
+const receipt = await arkivWalletClient.mutateEntities({
+    creates: [
+        {
+            payload: jsonToPayload(data),
+            contentType: 'application/json',
+            attributes: [
+            { key: 'collateralAsset', value: data.collateralAsset },
+            { key: 'debtAsset', value: data.debtAsset },
+            { key: 'user', value: data.user },
+            { key: 'debtToCover', value: data.debtToCover},
+            { key: 'liquidatedCollateralAmount', value: data.liquidatedCollateralAmount},
+            { key: 'liquidator', value: data.liquidator},
+            { key: 'receiveAToken', value: data.receiveAToken.toString()},
+            { key: "txHash", value: data.txHash}
+            ],
+            expiresIn: 200,
+        },
+        ],
+});
+console.info("LiquidationCall data stored successfully:", receipt);
+}
+
 
