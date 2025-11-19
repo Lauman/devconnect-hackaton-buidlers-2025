@@ -65,5 +65,6 @@ const receipt = await arkivWalletClient.mutateEntities({
         ],
 });
 console.info("Data stored successfully:", receipt);
+return receipt
 }
 

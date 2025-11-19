@@ -1,3 +1,4 @@
+import { MutateEntitiesReturnType } from "@arkiv-network/sdk";
 import * as z from "zod";
 
 export const withdrawSchema = z.object({
@@ -33,3 +34,9 @@ export type FlashLoanSchema = z.input<typeof flashLoanSchema>;
 
 export type DataType = "stats" | "blockdata" | "blocknumber";
 
+export type AccionHandler = (arg1: any) =>  Promise<MutateEntitiesReturnType>;
+
+export type AccionKeys = "withdraw" | "supply" | "flashLoan"| "liquidationCall";
+export type FunctionRegistry = {
+	[key in AccionKeys]: AccionHandler;
+};
