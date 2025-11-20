@@ -72,6 +72,7 @@ export async function storeWithdraw(data: WithdrawSchema) {
     ],
   });
   console.info("Withdraw data stored successfully:", receipt);
+  return receipt
 }
 
 export async function storeSupply(data: SupplySchema) {
@@ -81,20 +82,21 @@ export async function storeSupply(data: SupplySchema) {
         payload: jsonToPayload(data),
         contentType: "application/json",
         attributes: [
-            { key: 'provider', value: 'aave'},
-            { key: "event", value: "supply" },
-            { key: "reserve", value: data.reserve },
-            { key: "user", value: data.user },
-            { key: "onBehalfOf", value: data.onBehalfOf },
-            { key: "amount", value: data.amount },
-            { key: "referralCode", value: data.referralCode },
-            { key: "txHash", value: data.txHash },
+          { key: 'provider', value: 'aave' },
+          { key: "event", value: "supply" },
+          { key: "reserve", value: data.reserve },
+          { key: "user", value: data.user },
+          { key: "onBehalfOf", value: data.onBehalfOf },
+          { key: "amount", value: data.amount },
+          { key: "referralCode", value: data.referralCode },
+          { key: "txHash", value: data.txHash },
         ],
         expiresIn: ExpirationTime.fromHours(24),
       },
     ],
   });
   console.info("Supply data stored successfully:", receipt);
+  return receipt
 }
 
 export async function storeFlashLoan(data: FlashLoanSchema) {
@@ -104,22 +106,23 @@ export async function storeFlashLoan(data: FlashLoanSchema) {
         payload: jsonToPayload(data),
         contentType: "application/json",
         attributes: [
-            { key: 'provider', value: 'aave'},
-            { key: "event", value: "flash-loan" },
-            { key: "target", value: data.target },
-            { key: "initiator", value: data.initiator },
-            { key: "asset", value: data.asset },
-            { key: "amount", value: data.amount },
-            { key: "interestRateMode", value: data.interestRateMode },
-            { key: "premium", value: data.premium },
-            { key: "referralCode", value: data.referralCode },
-            { key: "txHash", value: data.txHash },
+          { key: 'provider', value: 'aave' },
+          { key: "event", value: "flash-loan" },
+          { key: "target", value: data.target },
+          { key: "initiator", value: data.initiator },
+          { key: "asset", value: data.asset },
+          { key: "amount", value: data.amount },
+          { key: "interestRateMode", value: data.interestRateMode },
+          { key: "premium", value: data.premium },
+          { key: "referralCode", value: data.referralCode },
+          { key: "txHash", value: data.txHash },
         ],
         expiresIn: ExpirationTime.fromHours(24),
       },
     ],
   });
   console.info("FlashLoan data stored successfully:", receipt);
+  return receipt
 }
 
 export async function storeLiquidationCall(data: LiquidationCallSchema) {
@@ -129,23 +132,24 @@ export async function storeLiquidationCall(data: LiquidationCallSchema) {
         payload: jsonToPayload(data),
         contentType: "application/json",
         attributes: [
-            { key: 'provider', value: 'aave'},
-            { key: "event", value: "liquidation-call" },
-            { key: "collateralAsset", value: data.collateralAsset },
-            { key: "debtAsset", value: data.debtAsset },
-            { key: "user", value: data.user },
-            { key: "debtToCover", value: data.debtToCover },
-            {
-                key: "liquidatedCollateralAmount",
-                value: data.liquidatedCollateralAmount,
-            },
-            { key: "liquidator", value: data.liquidator },
-            { key: "receiveAToken", value: data.receiveAToken.toString() },
-            { key: "txHash", value: data.txHash },
+          { key: 'provider', value: 'aave' },
+          { key: "event", value: "liquidation-call" },
+          { key: "collateralAsset", value: data.collateralAsset },
+          { key: "debtAsset", value: data.debtAsset },
+          { key: "user", value: data.user },
+          { key: "debtToCover", value: data.debtToCover },
+          {
+            key: "liquidatedCollateralAmount",
+            value: data.liquidatedCollateralAmount,
+          },
+          { key: "liquidator", value: data.liquidator },
+          { key: "receiveAToken", value: data.receiveAToken.toString() },
+          { key: "txHash", value: data.txHash },
         ],
         expiresIn: ExpirationTime.fromHours(24),
       },
     ],
   });
   console.info("LiquidationCall data stored successfully:", receipt);
+  return receipt
 }
