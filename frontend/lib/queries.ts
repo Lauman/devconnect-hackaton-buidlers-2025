@@ -157,6 +157,7 @@ export async function queryEventsWithFilters(
 
   const result = await query
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -323,6 +324,7 @@ export async function queryAggregatedMetrics(limit = 100): Promise<ParsedMetric[
     .buildQuery()
     .where(eq('entityType', 'aggregated_metric'))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -340,6 +342,7 @@ export async function queryMetricsByProtocol(
     .buildQuery()
     .where(eq('protocol', protocol))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -363,6 +366,7 @@ export async function queryMetricsByTimeWindow(
     .buildQuery()
     .where(eq('timeWindow', timeWindow))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -381,6 +385,7 @@ export async function queryPriceSnapshots(limit = 100): Promise<ParsedPrice[]> {
     .buildQuery()
     .where(eq('entityType', 'price_snapshot'))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -398,6 +403,7 @@ export async function queryPricesByAsset(
     .buildQuery()
     .where(eq('asset', asset))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -419,6 +425,7 @@ export async function queryEntitiesByType<T extends EntityData = EntityData>(
     .buildQuery()
     .where(eq('entityType', entityType))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
