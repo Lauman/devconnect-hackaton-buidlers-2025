@@ -56,7 +56,7 @@ export async function storeWithdraw(data: WithdrawSchema) {
   const receipt = await arkivWalletClient.mutateEntities({
     creates: [
       {
-        payload: jsonToPayload(data),
+        payload: jsonToPayload({...data,protocol:"aave-v3",eventType:"Withdraw"}),
         contentType: "application/json",
         attributes: [
           { key: "protocol", value: "aave-v3" },
@@ -79,7 +79,7 @@ export async function storeSupply(data: SupplySchema) {
   const receipt = await arkivWalletClient.mutateEntities({
     creates: [
       {
-        payload: jsonToPayload(data),
+        payload: jsonToPayload({...data,protocol:"aave-v3",eventType:"Supply"}),
         contentType: "application/json",
         attributes: [
             { key: 'protocol', value: 'aave-v3'},
@@ -103,7 +103,7 @@ export async function storeFlashLoan(data: FlashLoanSchema) {
   const receipt = await arkivWalletClient.mutateEntities({
     creates: [
       {
-        payload: jsonToPayload(data),
+        payload: jsonToPayload({...data,protocol:"aave-v3",eventType:"FlashLoan"}),
         contentType: "application/json",
         attributes: [
             { key: 'protocol', value: 'aave-v3'},
@@ -129,7 +129,7 @@ export async function storeLiquidationCall(data: LiquidationCallSchema) {
   const receipt = await arkivWalletClient.mutateEntities({
     creates: [
       {
-        payload: jsonToPayload(data),
+        payload: jsonToPayload({...data,protocol:"aave-v3",eventType:"LiquidationCall"}),
         contentType: "application/json",
         attributes: [
             { key: 'protocol', value: 'aave-v3'},
