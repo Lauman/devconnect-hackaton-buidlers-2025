@@ -110,29 +110,31 @@ async function main() {
 }
 
 async function handleEventWithdraw(event: string, reserve: string, user: string, to: string, amount: bigint,txHash: string) {
-  console.log("saving withdraw data")
+  console.log("⚙ Execute handleEventWithdraw...");
   const data = {reserve, user, to, amount: amount.toString(), txHash}
   await addNewQueue(event,data)
-  
-  console.log("data saved")
+  console.log("Withdraw data saved")
 }
 
 async function handleEventSupply(event: string, reserve: string, user: string, onBehalfOf: string, amount: bigint, referralCode: bigint,txHash: string) {
-  console.log("⚙ Execute handleEventWithdraw...");
+  console.log("⚙ Execute handleEventSupply...");
   const data = {reserve, user, onBehalfOf, amount: amount.toString(), referralCode: referralCode.toString(), txHash}
   await addNewQueue(event,data)
+  console.log("Supply data saved")
 }
 
 async function handleEventFlashLoan(event: string, target: string, initiator: string, asset: string, amount: bigint, interestRateMode: bigint, premium: bigint, referralCode: bigint,txHash: string) {
   console.log("⚙ Execute handleEventFlashLoan...");
   const data = {target, initiator, asset,  amount: amount.toString(), interestRateMode: interestRateMode.toString(), premium: premium.toString(), referralCode: referralCode.toString(),txHash}
   await addNewQueue(event,data)
+  console.log("FlashLoan data saved")
 }
 
 async function handleEventLiquidationCall(event: string, collateralAsset : string, debtAsset : string, user : string, debtToCover : bigint, liquidatedCollateralAmount : bigint, liquidator : string, receiveAToken : boolean,txHash: string) {
-  console.log("⚙ Execute handleEventFlashLoan...");
+  console.log("⚙ Execute handleEventLiquidationCall...");
   const data = {collateralAsset, debtAsset, user, debtToCover: debtToCover.toString(), liquidatedCollateralAmount: liquidatedCollateralAmount.toString(),liquidator,receiveAToken,txHash}
   await addNewQueue(event,data)
+  console.log("LiquidationCall data saved")
 }
 
 async function addNewQueue(event: string, data: any){

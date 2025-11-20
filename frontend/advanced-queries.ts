@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { createPublicClient, http } from '@arkiv-network/sdk';
 import { mendoza } from '@arkiv-network/sdk/chains';
 import { eq, and, or, gt, lt, gte, lte } from '@arkiv-network/sdk/query';
+import { ENTITY_OWNER } from './lib/arkiv';
 
 const client = createPublicClient({
   chain: mendoza,
@@ -19,6 +20,7 @@ async function queryByProtocol() {
   const result = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -32,6 +34,7 @@ async function queryByEventType(eventType: string) {
   const result = await client
     .buildQuery()
     .where(eq('eventType', eventType))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -45,6 +48,7 @@ async function queryByAsset(asset: string) {
   const result = await client
     .buildQuery()
     .where(eq('reserve', asset))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -58,6 +62,7 @@ async function queryByUser(userAddress: string) {
   const result = await client
     .buildQuery()
     .where(eq('user', userAddress))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -78,6 +83,7 @@ async function querySupplyByAsset(asset: string) {
   const allSupply = await client
     .buildQuery()
     .where(eq('eventType', 'Supply'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .withAttributes(true)
     .fetch();
@@ -98,6 +104,7 @@ async function queryHighValueTransactions(minAmount: number) {
   const allEvents = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -117,6 +124,7 @@ async function queryUserAssetActivity(userAddress: string, asset: string) {
   const userEvents = await client
     .buildQuery()
     .where(eq('user', userAddress))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .withAttributes(true)
     .fetch();
@@ -141,6 +149,7 @@ async function calculateVolumeByAsset() {
   const allEvents = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -172,6 +181,7 @@ async function findMostActiveUsers(topN: number = 5) {
   const allEvents = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -206,6 +216,7 @@ async function analyzeEventDistribution() {
   const allEvents = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -239,6 +250,7 @@ async function findLiquidations() {
   const result = await client
     .buildQuery()
     .where(eq('eventType', 'LiquidationCall'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -259,6 +271,7 @@ async function queryByTimeRange(startTime: Date, endTime: Date) {
   const allEvents = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -283,6 +296,7 @@ async function calculateAverageSizeByType() {
   const allEvents = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -319,6 +333,7 @@ async function findUniqueUsers() {
   const allEvents = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -345,6 +360,7 @@ async function queryWithPagination(pageSize: number, pageNumber: number) {
   const allEvents = await client
     .buildQuery()
     .where(eq('protocol', 'aave-v3'))
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 

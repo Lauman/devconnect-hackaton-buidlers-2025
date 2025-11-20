@@ -1,4 +1,4 @@
-import { getArkivPublicClient } from './arkiv';
+import { ENTITY_OWNER, getArkivPublicClient } from './arkiv';
 import { eq } from '@arkiv-network/sdk/query';
 import type {
   EntityData,
@@ -42,6 +42,7 @@ export async function queryAllEvents(limit = 100): Promise<ParsedEvent[]> {
     .buildQuery()
     .where(eq('entityType', 'protocol_event'))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -59,6 +60,7 @@ export async function queryEventsByProtocol(
     .buildQuery()
     .where(eq('protocol', protocol))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -86,6 +88,7 @@ export async function queryEventsByType(
     .buildQuery()
     .where(eq('eventType', eventType))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -103,6 +106,7 @@ export async function queryEventsByAsset(
     .buildQuery()
     .where(eq('reserve', asset))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -120,6 +124,7 @@ export async function queryEventsByUser(
     .buildQuery()
     .where(eq('user', userAddress))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -152,6 +157,7 @@ export async function queryEventsWithFilters(
 
   const result = await query
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -318,6 +324,7 @@ export async function queryAggregatedMetrics(limit = 100): Promise<ParsedMetric[
     .buildQuery()
     .where(eq('entityType', 'aggregated_metric'))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -335,6 +342,7 @@ export async function queryMetricsByProtocol(
     .buildQuery()
     .where(eq('protocol', protocol))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -358,6 +366,7 @@ export async function queryMetricsByTimeWindow(
     .buildQuery()
     .where(eq('timeWindow', timeWindow))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -376,6 +385,7 @@ export async function queryPriceSnapshots(limit = 100): Promise<ParsedPrice[]> {
     .buildQuery()
     .where(eq('entityType', 'price_snapshot'))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -393,6 +403,7 @@ export async function queryPricesByAsset(
     .buildQuery()
     .where(eq('asset', asset))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
@@ -414,6 +425,7 @@ export async function queryEntitiesByType<T extends EntityData = EntityData>(
     .buildQuery()
     .where(eq('entityType', entityType))
     .withAttributes(true)
+    .ownedBy(ENTITY_OWNER as `0x${string}`)
     .withPayload(true)
     .fetch();
 
