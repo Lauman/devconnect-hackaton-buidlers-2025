@@ -106,7 +106,7 @@ export function isLiquidationCallEvent(event: any): event is LiquidationCallEven
 
 export interface EventFilters {
   protocol?: "aave-v3" | "all";
-  eventType?: "withdraw" | "supply" | "flash-loan" | "liquidation-call" | "all";
+  eventType?: "Withdraw" | "Supply" | "FlashLoan" | "LiquidationCall" | "all";
   asset?: string;
   user?: string;
   minAmount?: string;

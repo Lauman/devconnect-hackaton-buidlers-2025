@@ -58,9 +58,9 @@ export default function StatsCards({ events }: StatsCardsProps) {
   const uniqueUsers = new Set(
     events.flatMap(event => {
       const users: string[] = [];
-      if ("user" in event) users.push(event.user);
-      if ("initiator" in event) users.push(event.initiator);
-      if ("liquidator" in event) users.push(event.liquidator);
+      if (event.user) users.push(event.user);
+      if (event.initiator) users.push(event.initiator);
+      if (event.liquidator) users.push(event.liquidator);
       return users;
     })
   ).size;

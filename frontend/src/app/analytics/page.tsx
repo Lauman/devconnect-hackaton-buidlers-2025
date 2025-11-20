@@ -5,7 +5,7 @@ import StatsCards from '@/components/StatsCards';
 import EventTable from '@/components/EventTable';
 import EventDistributionChart from '@/components/EventDistributionChart';
 import { queryAllAaveEvents, calculateEventStats } from '@/lib/queries';
-import { enhanceEvent } from '@/lib/utils';
+import { enhanceEvent, formatEventType } from '@/lib/utils';
 import type { ParsedAaveEvent, EventStats } from '@/lib/types';
 
 export default function AnalyticsPage() {
@@ -114,7 +114,7 @@ export default function AnalyticsPage() {
             <div className="mb-6">
               <EventDistributionChart
                 data={Object.entries(stats.eventsByType).map(([name, value]) => ({
-                  name: name.replace("-", " "),
+                  name: formatEventType(name),
                   value
                 }))}
               />
@@ -151,7 +151,7 @@ export default function AnalyticsPage() {
             <div className="mt-4 p-3 bg-white dark:bg-gray-800 rounded text-xs">
               <p className="font-semibold mb-1">Backend Event Types:</p>
               <p className="text-gray-600 dark:text-gray-400">
-                withdraw, supply, flash-loan, liquidation-call
+                Withdraw, Supply, FlashLoan, LiquidationCall
               </p>
             </div>
           </div>

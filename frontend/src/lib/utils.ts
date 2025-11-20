@@ -195,13 +195,13 @@ export function formatTimestamp(timestamp: string): string {
 }
 
 /**
- * Convert event type from kebab-case to readable format
- * @param eventType - Event type from backend ("withdraw", "flash-loan", etc.)
- * @returns Readable event type ("Withdraw", "Flash Loan", etc.)
+ * Convert event type from PascalCase to readable format
+ * @param eventType - Event type from backend ("Withdraw", "FlashLoan", "LiquidationCall", etc.)
+ * @returns Readable event type with spaces ("Withdraw", "Flash Loan", "Liquidation Call", etc.)
  */
 export function formatEventType(eventType: string): string {
+  // Handle PascalCase by adding spaces before capital letters
   return eventType
-    .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+    .replace(/([A-Z])/g, ' $1')
+    .trim();
 }

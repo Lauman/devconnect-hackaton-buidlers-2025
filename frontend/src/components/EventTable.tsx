@@ -88,7 +88,7 @@ export default function EventTable({ events }: EventTableProps) {
                       rel="noopener noreferrer"
                       className="text-blue-600 dark:text-blue-400 hover:underline"
                     >
-                      {formatAddress(event.txHash)}
+                      {event.txHash ? formatAddress(event.txHash) : '-'}
                     </a>
                   </td>
                 </tr>

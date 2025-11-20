@@ -1,15 +1,13 @@
 import StatsCards from '@/components/StatsCards';
 import EventsTable from '@/components/EventsTable';
-import { queryAllAaveEvents } from '@/lib/queries';
-import { enhanceEvent } from '@/lib/utils';
-import type { ParsedAaveEvent } from '@/lib/types';
+import { queryAllEvents } from '@/lib/queries';
+import type { ParsedEvent } from '@/lib/types';
 
 export default async function HomePage() {
   // Fetch data on the server
-  let events: ParsedAaveEvent[] = [];
+  let events: ParsedEvent[] = [];
   try {
-    const fetchedEvents = await queryAllAaveEvents(50);
-    events = fetchedEvents.map(enhanceEvent);
+    events = await queryAllEvents(50);
   } catch (error) {
     console.error('Failed to fetch events:', error);
   }
@@ -19,7 +17,7 @@ export default async function HomePage() {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Arkiv Analytics Dashboard</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Real-time analytics for Aave V3 events on Arkiv Network
+          Real-time analytics for Aave protocol events on Arkiv Network
         </p>
       </div>
 

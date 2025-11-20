@@ -88,25 +88,27 @@ export default function EventsTable({ initialEvents = [] }: EventsTableProps) {
                 <span className="font-medium">{event.reserve}</span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                {parseFloat(event.amount).toLocaleString(undefined, {
+                {event.amount ? parseFloat(event.amount).toLocaleString(undefined, {
                   maximumFractionDigits: 2,
-                })}
+                }) : '-'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">
-                {event.user.slice(0, 6)}...{event.user.slice(-4)}
+                {event.user ? `${event.user.slice(0, 6)}...${event.user.slice(-4)}` : '-'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                {formatDistance(new Date(event.timestamp), new Date(), { addSuffix: true })}
+                {event.timestamp ? formatDistance(new Date(event.timestamp), new Date(), { addSuffix: true }) : '-'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">
-                <a
-                  href={`https://explorer.mendoza.hoodi.arkiv.network/tx/${event.txHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                >
-                  {event.txHash.slice(0, 8)}...
-                </a>
+                {event.txHash ? (
+                  <a
+                    href={`https://explorer.mendoza.hoodi.arkiv.network/tx/${event.txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                  >
+                    {event.txHash.slice(0, 8)}...
+                  </a>
+                ) : '-'}
               </td>
             </tr>
           ))}

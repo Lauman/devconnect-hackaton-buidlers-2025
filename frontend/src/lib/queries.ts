@@ -31,13 +31,13 @@ function parseAaveEntity(entity: Entity): ParsedAaveEvent {
 
   // Compute timestamp from block number (12s per block average for Ethereum)
   const timestamp = entity.createdAtBlock
-    ? new Date(entity.createdAtBlock * 12000).toISOString()
+    ? new Date(Number(entity.createdAtBlock) * 12000).toISOString()
     : new Date().toISOString();
 
   return {
     ...data,
     entityKey: entity.key,
-    eventType,
+    eventType: String(eventType),
     protocol: "aave-v3",
     timestamp,
   };
@@ -69,17 +69,17 @@ export async function queryAllAaveEvents(limit = 100): Promise<ParsedAaveEvent[]
 
 /**
  * Query events by type
- * Uses "event-type" attribute with kebab-case values
+ * Uses "event-type" attribute with PascalCase values
  */
 export async function queryEventsByType(
-  eventType: "withdraw" | "supply" | "flash-loan" | "liquidation-call",
+  eventType: "Withdraw" | "Supply" | "FlashLoan" | "LiquidationCall",
   limit = 100
 ): Promise<ParsedAaveEvent[]> {
   const client = getArkivPublicClient();
 
   const result = await client
     .buildQuery()
-    .where(eq("event-type", eventType))  // Backend uses "event-type" not "eventType"
+    .where(eq("event-type", eventType))  // Backend uses PascalCase: "Withdraw", "Supply", "FlashLoan", "LiquidationCall"
     .withPayload(true)
     .withAttributes(true)
     .fetch();
@@ -92,29 +92,29 @@ export async function queryEventsByType(
 /**
  * Query withdraw events specifically
  */
-export async function queryWithdrawEvents(limit = 100): Promise<ParsedAaveEvent<WithdrawEvent>[]> {
-  return queryEventsByType("withdraw", limit) as Promise<ParsedAaveEvent<WithdrawEvent>[]>;
+export async function queryWithdrawEvents(limit = 100): Promise<ParsedAaveEvent[]> {
+  return queryEventsByType("Withdraw", limit);
 }
 
 /**
  * Query supply events specifically
  */
-export async function querySupplyEvents(limit = 100): Promise<ParsedAaveEvent<SupplyEvent>[]> {
-  return queryEventsByType("supply", limit) as Promise<ParsedAaveEvent<SupplyEvent>[]>;
+export async function querySupplyEvents(limit = 100): Promise<ParsedAaveEvent[]> {
+  return queryEventsByType("Supply", limit);
 }
 
 /**
  * Query flash loan events specifically
  */
-export async function queryFlashLoanEvents(limit = 100): Promise<ParsedAaveEvent<FlashLoanEvent>[]> {
-  return queryEventsByType("flash-loan", limit) as Promise<ParsedAaveEvent<FlashLoanEvent>[]>;
+export async function queryFlashLoanEvents(limit = 100): Promise<ParsedAaveEvent[]> {
+  return queryEventsByType("FlashLoan", limit);
 }
 
 /**
  * Query liquidation events specifically
  */
-export async function queryLiquidationEvents(limit = 100): Promise<ParsedAaveEvent<LiquidationCallEvent>[]> {
-  return queryEventsByType("liquidation-call", limit) as Promise<ParsedAaveEvent<LiquidationCallEvent>[]>;
+export async function queryLiquidationEvents(limit = 100): Promise<ParsedAaveEvent[]> {
+  return queryEventsByType("LiquidationCall", limit);
 }
 
 /**
@@ -127,10 +127,10 @@ export async function queryEventsByUser(userAddress: string, limit = 100): Promi
 
   // Filter client-side for user
   return allEvents.filter(event => {
-    if ("user" in event && event.user.toLowerCase() === userAddress.toLowerCase()) {
+    if ("user" in event && event.user && event.user.toLowerCase() === userAddress.toLowerCase()) {
       return true;
     }
-    if ("initiator" in event && event.initiator.toLowerCase() === userAddress.toLowerCase()) {
+    if ("initiator" in event && event.initiator && event.initiator.toLowerCase() === userAddress.toLowerCase()) {
       return true;
     }
     return false;
@@ -145,11 +145,9 @@ export async function queryEventsByAsset(assetAddress: string, limit = 100): Pro
   const allEvents = await queryAllAaveEvents(1000);
 
   return allEvents.filter(event => {
-    const eventAsset = ("reserve" in event && event.reserve) ||
-                       ("asset" in event && event.asset) ||
-                       ("collateralAsset" in event && event.collateralAsset);
+    const eventAsset = event.reserve || event.asset || event.collateralAsset;
 
-    return eventAsset?.toLowerCase() === assetAddress.toLowerCase();
+    return eventAsset && eventAsset.toLowerCase() === assetAddress.toLowerCase();
   }).slice(0, limit);
 }
 
@@ -172,17 +170,15 @@ export async function queryEventsWithFilters(filters: EventFilters): Promise<Par
   // Apply client-side filters
   if (filters.user) {
     events = events.filter(event => {
-      const eventUser = ("user" in event && event.user) ||
-                       ("initiator" in event && event.initiator);
-      return eventUser?.toLowerCase() === filters.user!.toLowerCase();
+      const eventUser = event.user || event.initiator;
+      return eventUser && eventUser.toLowerCase() === filters.user!.toLowerCase();
     });
   }
 
   if (filters.asset) {
     events = events.filter(event => {
-      const eventAsset = ("reserve" in event && event.reserve) ||
-                        ("asset" in event && event.asset);
-      return eventAsset?.toLowerCase() === filters.asset!.toLowerCase();
+      const eventAsset = event.reserve || event.asset;
+      return eventAsset && eventAsset.toLowerCase() === filters.asset!.toLowerCase();
     });
   }
 
@@ -237,18 +233,14 @@ export async function calculateEventStats(): Promise<EventStats> {
     stats.eventsByType[event.eventType] = (stats.eventsByType[event.eventType] || 0) + 1;
 
     // Track unique users
-    if ("user" in event) uniqueUserSet.add(event.user.toLowerCase());
-    if ("initiator" in event) uniqueUserSet.add(event.initiator.toLowerCase());
-    if ("liquidator" in event) uniqueUserSet.add(event.liquidator.toLowerCase());
+    if (event.user) uniqueUserSet.add(event.user.toLowerCase());
+    if (event.initiator) uniqueUserSet.add(event.initiator.toLowerCase());
+    if (event.liquidator) uniqueUserSet.add(event.liquidator.toLowerCase());
 
     // Calculate volumes by asset (in wei)
-    const asset = ("reserve" in event && event.reserve) ||
-                 ("asset" in event && event.asset) ||
-                 ("collateralAsset" in event && event.collateralAsset);
+    const asset = event.reserve || event.asset || event.collateralAsset;
 
-    const amount = event.amount ||
-                  ("liquidatedCollateralAmount" in event && event.liquidatedCollateralAmount) ||
-                  "0";
+    const amount = event.amount || event.liquidatedCollateralAmount || "0";
 
     if (asset) {
       const currentVolume = BigInt(stats.totalVolumeWei[asset] || "0");

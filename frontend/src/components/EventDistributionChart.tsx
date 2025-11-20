@@ -35,6 +35,7 @@ export default function EventDistributionChart({ data }: EventDistributionChartP
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
+            // @ts-expect-error - Recharts type compatibility issue
             data={data}
             dataKey="value"
             nameKey="name"
