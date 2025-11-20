@@ -60,14 +60,14 @@ export async function storeWithdraw(data: WithdrawSchema) {
         contentType: "application/json",
         attributes: [
           { key: "protocol", value: "aave-v3" },
-          { key: "event-type", value: "Withdraw" },
+          { key: "eventType", value: "Withdraw" },
           { key: "reserve", value: data.reserve },
           { key: "user", value: data.user },
           { key: "to", value: data.to },
           { key: "amount", value: data.amount },
           { key: "txHash", value: data.txHash },
         ],
-        expiresIn: ExpirationTime.fromHours(24),
+        expiresIn: 200,
       },
     ],
   });
@@ -83,7 +83,7 @@ export async function storeSupply(data: SupplySchema) {
         contentType: "application/json",
         attributes: [
             { key: 'protocol', value: 'aave-v3'},
-            { key: "event-type", value: "Supply" },
+            { key: "eventType", value: "Supply" },
             { key: "reserve", value: data.reserve },
             { key: "user", value: data.user },
             { key: "onBehalfOf", value: data.onBehalfOf },
@@ -107,7 +107,7 @@ export async function storeFlashLoan(data: FlashLoanSchema) {
         contentType: "application/json",
         attributes: [
             { key: 'protocol', value: 'aave-v3'},
-            { key: "event-type", value: "FlashLoan" },
+            { key: "eventType", value: "FlashLoan" },
             { key: "target", value: data.target },
             { key: "initiator", value: data.initiator },
             { key: "asset", value: data.asset },
@@ -133,7 +133,7 @@ export async function storeLiquidationCall(data: LiquidationCallSchema) {
         contentType: "application/json",
         attributes: [
             { key: 'protocol', value: 'aave-v3'},
-            { key: "event-type", value: "LiquidationCall" },
+            { key: "eventType", value: "LiquidationCall" },
             { key: "collateralAsset", value: data.collateralAsset },
             { key: "debtAsset", value: data.debtAsset },
             { key: "user", value: data.user },
