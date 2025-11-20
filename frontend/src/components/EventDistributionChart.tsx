@@ -1,58 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 interface EventDistribution {
-  eventType: string;
-  count: number;
-  percentage: string;
+  name: string;
+  value: number;
 }
 
-const COLORS = {
-  Supply: '#10b981',      // green
-  Borrow: '#3b82f6',      // blue
-  Withdraw: '#f59e0b',    // yellow
-  Repay: '#8b5cf6',       // purple
-  LiquidationCall: '#ef4444', // red
-};
+interface EventDistributionChartProps {
+  data: EventDistribution[];
+}
 
-export default function EventDistributionChart() {
-  const [data, setData] = useState<EventDistribution[]>([]);
-  const [loading, setLoading] = useState(true);
+const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#ec4899'];
 
-  useEffect(() => {
-    fetchDistributionData();
-  }, []);
-
-  async function fetchDistributionData() {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/analytics/distribution');
-      const json = await response.json();
-
-      if (json.success) {
-        const chartData = Object.entries(json.data).map(([eventType, count]) => ({
-          eventType,
-          count: count as number,
-          percentage: json.percentages[eventType],
-        }));
-
-        setData(chartData);
-      }
-    } catch (error) {
-      console.error('Failed to fetch distribution data:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (loading) {
+export default function EventDistributionChart({ data }: EventDistributionChartProps) {
+  if (!data || data.length === 0) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold mb-4">Event Type Distribution</h3>
         <div className="h-64 flex items-center justify-center">
-          <div className="animate-pulse text-gray-400">Loading chart...</div>
+          <div className="text-gray-400">No data available</div>
         </div>
       </div>
     );
@@ -69,17 +36,17 @@ export default function EventDistributionChart() {
         <PieChart>
           <Pie
             data={data}
-            dataKey="count"
-            nameKey="eventType"
+            dataKey="value"
+            nameKey="name"
             cx="50%"
             cy="50%"
             outerRadius={100}
-            label={({ eventType, percentage }) => `${eventType} (${percentage})`}
+            label={({ name, percent }) => `${name} (${percent ? (percent * 100).toFixed(0) : 0}%)`}
           >
-            {data.map((entry) => (
+            {data.map((_, index) => (
               <Cell
-                key={entry.eventType}
-                fill={COLORS[entry.eventType as keyof typeof COLORS] || '#6b7280'}
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
               />
             ))}
           </Pie>

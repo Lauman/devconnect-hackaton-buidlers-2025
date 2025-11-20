@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import type { EntityType, ProtocolType, EventType } from '@/lib/types';
+import { formatEventType } from '@/lib/utils';
 
 export interface QueryConfig {
-  entityType?: EntityType | 'all';
-  protocol?: ProtocolType | 'all';
-  eventType?: EventType | 'all';
+  protocol?: "aave-v3" | "all";
+  eventType?: "withdraw" | "supply" | "flash-loan" | "liquidation-call" | "all";
   asset?: string;
   user?: string;
   minAmount?: string;
@@ -22,7 +21,6 @@ interface QueryBuilderProps {
 
 export default function QueryBuilder({ onExecute, loading = false }: QueryBuilderProps) {
   const [config, setConfig] = useState<QueryConfig>({
-    entityType: 'all',
     protocol: 'all',
     eventType: 'all',
     asset: '',
@@ -40,7 +38,6 @@ export default function QueryBuilder({ onExecute, loading = false }: QueryBuilde
 
   const handleReset = () => {
     setConfig({
-      entityType: 'all',
       protocol: 'all',
       eventType: 'all',
       asset: '',
@@ -52,75 +49,52 @@ export default function QueryBuilder({ onExecute, loading = false }: QueryBuilde
     });
   };
 
-  // Get available event types based on selected protocol
-  const getEventTypeOptions = () => {
-    if (config.protocol === 'aave-v3') {
-      return ['Supply', 'Borrow', 'Withdraw', 'Repay', 'LiquidationCall'];
-    } else if (config.protocol === 'uniswap-v3') {
-      return ['Swap'];
-    } else {
-      // All protocols - show all event types
-      return ['Supply', 'Borrow', 'Withdraw', 'Repay', 'LiquidationCall', 'Swap'];
-    }
-  };
+  // Real Aave V3 event types from backend (kebab-case)
+  const eventTypeOptions = [
+    { value: 'withdraw', label: 'Withdraw' },
+    { value: 'supply', label: 'Supply' },
+    { value: 'flash-loan', label: 'Flash Loan' },
+    { value: 'liquidation-call', label: 'Liquidation' },
+  ];
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <h2 className="text-2xl font-bold mb-4">Query Builder</h2>
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-        Build custom queries to analyze DeFi protocol data stored on Arkiv DB-chain
+        Build custom queries to analyze real Aave V3 events stored on Arkiv DB-chain
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Entity Type Filter */}
+        {/* Protocol Filter */}
         <div>
-          <label className="block text-sm font-medium mb-2">Entity Type</label>
+          <label className="block text-sm font-medium mb-2">Protocol</label>
           <select
-            value={config.entityType}
-            onChange={(e) => setConfig({ ...config, entityType: e.target.value as any })}
+            value={config.protocol}
+            onChange={(e) => setConfig({ ...config, protocol: e.target.value as any })}
             className="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 px-4 py-2"
           >
-            <option value="all">All Entity Types</option>
-            <option value="protocol_event">Protocol Events</option>
-            <option value="aggregated_metric">Aggregated Metrics</option>
-            <option value="price_snapshot">Price Snapshots</option>
+            <option value="all">All Protocols</option>
+            <option value="aave-v3">Aave V3</option>
           </select>
+          <p className="text-xs text-gray-500 mt-1">Currently only Aave V3 events are available</p>
         </div>
 
-        {/* Protocol Filter - Only show for protocol events */}
-        {(config.entityType === 'all' || config.entityType === 'protocol_event') && (
-          <div>
-            <label className="block text-sm font-medium mb-2">Protocol</label>
-            <select
-              value={config.protocol}
-              onChange={(e) => setConfig({ ...config, protocol: e.target.value as any, eventType: 'all' })}
-              className="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 px-4 py-2"
-            >
-              <option value="all">All Protocols</option>
-              <option value="aave-v3">Aave V3</option>
-              <option value="uniswap-v3">Uniswap V3</option>
-            </select>
-          </div>
-        )}
-
-        {/* Event Type Filter - Only show for protocol events */}
-        {(config.entityType === 'all' || config.entityType === 'protocol_event') && (
-          <div>
-            <label className="block text-sm font-medium mb-2">Event Type</label>
-            <select
-              value={config.eventType}
-              onChange={(e) => setConfig({ ...config, eventType: e.target.value as any })}
-              className="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 px-4 py-2"
-            >
-              <option value="all">All Event Types</option>
-              {getEventTypeOptions().map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        {/* Event Type Filter */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Event Type</label>
+          <select
+            value={config.eventType}
+            onChange={(e) => setConfig({ ...config, eventType: e.target.value as any })}
+            className="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 px-4 py-2"
+          >
+            <option value="all">All Event Types</option>
+            {eventTypeOptions.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Asset Filter */}
         <div>
@@ -136,8 +110,10 @@ export default function QueryBuilder({ onExecute, loading = false }: QueryBuilde
             <option value="DAI">DAI</option>
             <option value="USDT">USDT</option>
             <option value="WBTC">WBTC</option>
+            <option value="AAVE">AAVE</option>
             <option value="LINK">LINK</option>
           </select>
+          <p className="text-xs text-gray-500 mt-1">Filter by token symbol</p>
         </div>
 
         {/* User Address Filter */}
@@ -152,10 +128,10 @@ export default function QueryBuilder({ onExecute, loading = false }: QueryBuilde
           />
         </div>
 
-        {/* Amount Range */}
+        {/* Amount Range (in wei) */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Min Amount</label>
+            <label className="block text-sm font-medium mb-2">Min Amount (wei)</label>
             <input
               type="number"
               value={config.minAmount}
@@ -165,7 +141,7 @@ export default function QueryBuilder({ onExecute, loading = false }: QueryBuilde
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Max Amount</label>
+            <label className="block text-sm font-medium mb-2">Max Amount (wei)</label>
             <input
               type="number"
               value={config.maxAmount}
@@ -244,7 +220,7 @@ export default function QueryBuilder({ onExecute, loading = false }: QueryBuilde
 
       {/* Query Preview */}
       <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-        <h3 className="text-sm font-semibold mb-2">Query Preview:</h3>
+        <h3 className="text-sm font-semibold mb-2">Arkiv Query Preview:</h3>
         <code className="text-xs text-gray-700 dark:text-gray-300">
           {generateQueryPreview(config)}
         </code>
@@ -256,43 +232,34 @@ export default function QueryBuilder({ onExecute, loading = false }: QueryBuilde
 function generateQueryPreview(config: QueryConfig): string {
   const conditions = [];
 
-  // Entity type
-  if (config.entityType && config.entityType !== 'all') {
-    conditions.push(`entityType = "${config.entityType}"`);
-  }
-
-  // Protocol
+  // Protocol (uses "protocol" attribute)
   if (config.protocol && config.protocol !== 'all') {
     conditions.push(`protocol = "${config.protocol}"`);
   }
 
-  // Event type
+  // Event type (uses "event-type" attribute with kebab-case values)
   if (config.eventType && config.eventType !== 'all') {
-    conditions.push(`eventType = "${config.eventType}"`);
+    conditions.push(`event-type = "${config.eventType}"`);
   }
 
-  // Asset
+  // Asset (client-side filter)
   if (config.asset) {
-    conditions.push(`asset = "${config.asset}"`);
+    conditions.push(`reserve = "${config.asset}" (client-side)`);
   }
 
-  // User
+  // User (client-side filter)
   if (config.user) {
-    conditions.push(`user = "${config.user}"`);
+    conditions.push(`user = "${config.user}" (client-side)`);
   }
 
-  // Amount range
+  // Amount range (client-side filter)
   if (config.minAmount) {
-    conditions.push(`amountUSD >= ${config.minAmount}`);
+    conditions.push(`amount >= ${config.minAmount} (client-side)`);
   }
   if (config.maxAmount) {
-    conditions.push(`amountUSD <= ${config.maxAmount}`);
+    conditions.push(`amount <= ${config.maxAmount} (client-side)`);
   }
 
-  const tableName = config.entityType === 'aggregated_metric' ? 'metrics' :
-                     config.entityType === 'price_snapshot' ? 'prices' :
-                     'events';
-
-  const where = conditions.length > 0 ? conditions.join(' AND ') : 'entityType = "protocol_event"';
-  return `SELECT * FROM ${tableName} WHERE ${where} LIMIT ${config.limit}`;
+  const where = conditions.length > 0 ? conditions.join(' AND ') : 'protocol = "aave-v3"';
+  return `arkiv.buildQuery().where(${where}).limit(${config.limit})`;
 }

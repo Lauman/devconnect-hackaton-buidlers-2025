@@ -28,8 +28,10 @@ export default function QueryResults({ results, config }: QueryResultsProps) {
       // Group by date
       const grouped: Record<string, number> = {};
       results.forEach(event => {
-        const date = new Date(event.timestamp).toLocaleDateString();
-        grouped[date] = (grouped[date] || 0) + 1;
+        if (event.timestamp) {
+          const date = new Date(event.timestamp).toLocaleDateString();
+          grouped[date] = (grouped[date] || 0) + 1;
+        }
       });
       return Object.entries(grouped)
         .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
@@ -115,14 +117,16 @@ function TableView({ results }: { results: ParsedEvent[] }) {
                   {event.eventType}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap font-medium">{event.reserve}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{parseFloat(event.amount).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">{event.user.slice(0, 6)}...{event.user.slice(-4)}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm">{formatDistance(new Date(event.timestamp), new Date(), { addSuffix: true })}</td>
+              <td className="px-6 py-4 whitespace-nowrap font-medium">{event.reserve || '-'}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{event.amount ? parseFloat(event.amount).toLocaleString(undefined, { maximumFractionDigits: 2 }) : '-'}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">{event.user ? `${event.user.slice(0, 6)}...${event.user.slice(-4)}` : '-'}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm">{event.timestamp ? formatDistance(new Date(event.timestamp), new Date(), { addSuffix: true }) : '-'}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">
-                <a href={`https://explorer.mendoza.hoodi.arkiv.network/tx/${event.txHash}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                  {event.txHash.slice(0, 8)}...
-                </a>
+                {event.txHash ? (
+                  <a href={`https://explorer.mendoza.hoodi.arkiv.network/tx/${event.txHash}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                    {event.txHash.slice(0, 8)}...
+                  </a>
+                ) : '-'}
               </td>
             </tr>
           ))}
@@ -158,7 +162,7 @@ function PieChartView({ data }: { data: any[] }) {
           cx="50%"
           cy="50%"
           outerRadius={120}
-          label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+          label={({ name, percent }) => `${name} (${percent ? (percent * 100).toFixed(0) : 0}%)`}
         >
           {data.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -198,15 +202,14 @@ function getEventTypeColor(eventType: string): string {
 }
 
 function downloadCSV(results: ParsedEvent[]) {
-  const headers = ['Event Type', 'Asset', 'Amount', 'User', 'Timestamp', 'Tx Hash', 'Block'];
+  const headers = ['Event Type', 'Asset', 'Amount', 'User', 'Timestamp', 'Tx Hash'];
   const rows = results.map(event => [
     event.eventType,
-    event.reserve,
-    event.amount,
-    event.user,
-    event.timestamp,
-    event.txHash,
-    event.blockNumber,
+    event.reserve || '',
+    event.amount || '',
+    event.user || '',
+    event.timestamp || '',
+    event.txHash || '',
   ]);
 
   const csv = [

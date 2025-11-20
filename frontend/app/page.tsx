@@ -22,7 +22,7 @@ export default async function HomePage() {
       </div>
 
       <div className="mb-8">
-        <StatsCards />
+        <StatsCards events={events} />
       </div>
 
       <div className="mt-8">
