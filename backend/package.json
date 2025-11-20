@@ -3,20 +3,28 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm src/index.ts",
+    "start:redis": "docker run -d -p 6379:6379 --name redis redis",
+    "stop:redis": "docker stop redis || true && docker rm redis || true",
+    "start:listeners": "node --loader ts-node/esm src/index.ts",
+    "start:worker": "node --loader ts-node/esm src/worker/index.ts",
+    "dev:services": "concurrently \"npm run start:worker\" \"npm run start:listeners\"",
+    "start": "npm run stop:redis && npm run start:redis && npm run dev:services",
     "build": "tsc"
   },
   "dependencies": {
     "@arkiv-network/sdk": "^0.4.5",
     "@biomejs/biome": "^2.3.6",
+    "bullmq": "^5.63.2",
     "dotenv": "^16.4.0",
     "ethers": "^6.12.0",
+    "ioredis": "^5.3.2",
     "tslib": "^2.8.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
     "@types/node": "^24.10.1",
+    "concurrently": "^9.2.1",
+    "ts-node": "^10.9.1",
     "typescript": "^5.3.0"
   }
 }

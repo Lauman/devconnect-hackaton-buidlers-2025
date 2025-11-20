@@ -72,6 +72,7 @@ export async function storeWithdraw(data: WithdrawSchema) {
     ],
   });
   console.info("Withdraw data stored successfully:", receipt);
+  return receipt
 }
 
 export async function storeSupply(data: SupplySchema) {
@@ -95,6 +96,7 @@ export async function storeSupply(data: SupplySchema) {
     ],
   });
   console.info("Supply data stored successfully:", receipt);
+  return receipt
 }
 
 export async function storeFlashLoan(data: FlashLoanSchema) {
@@ -120,6 +122,7 @@ export async function storeFlashLoan(data: FlashLoanSchema) {
     ],
   });
   console.info("FlashLoan data stored successfully:", receipt);
+  return receipt
 }
 
 export async function storeLiquidationCall(data: LiquidationCallSchema) {
@@ -148,4 +151,5 @@ export async function storeLiquidationCall(data: LiquidationCallSchema) {
     ],
   });
   console.info("LiquidationCall data stored successfully:", receipt);
+  return receipt
 }
