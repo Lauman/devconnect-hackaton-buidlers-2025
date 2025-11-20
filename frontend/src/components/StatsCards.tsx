@@ -67,13 +67,13 @@ export default function StatsCards() {
   );
 }
 
-function StatCard({ title, value }: { title: string; value: number }) {
+function StatCard({ title, value }: { title: string; value?: number }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
-          <p className="text-2xl font-bold mt-1">{value.toLocaleString()}</p>
+          <p className="text-2xl font-bold mt-1">{(value ?? 0).toLocaleString()}</p>
         </div>
       </div>
     </div>
